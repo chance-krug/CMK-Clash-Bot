@@ -1,6 +1,8 @@
 const auth = require('../auth.json');
 const formatter = require('./formatter')
 const axios = require('axios');
+const fs = require('fs');
+
 const options = {
     headers: {
         Accept: 'application/json',
@@ -48,8 +50,22 @@ module.exports = {
      * @param tag - The tag of the clan you wish to lookup
      * @param msg - The discord message object that triggered the event
      */
-    getPlayerStats(tag, msg){
-        console.log("Getting stats for player: " + tag)
-        //TODO: Complete lookup logic
+    getPlayerStats(tag, msg, numAttacks){
+        console.log("Getting stats for player: " + tag);
+        let data = fs.readFileSync('C:\\Users\\chanc\\IdeaProjects\\stats-updater\\stats.json');
+        let statsObject = JSON.parse(data);
+        let attackCounter = 0;
+        let i = statsObject.stats.length - 1;
+        let playerStats = new Array();
+        while (attackCounter < numAttacks && i >= 0) {
+            if(statsObject.stats[i].tag === tag){
+                console.log(statsObject.stats[i]);
+                playerStats.push(statsObject.stats[i]);
+                attackCounter++;
+            }
+            i--;
+        }
+        let output = formatter.formatPlayerStats(playerStats);
+        msg.channel.send(output);
     }
 };

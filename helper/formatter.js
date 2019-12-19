@@ -21,7 +21,7 @@ module.exports = {
         if(response.reason === 'notFound'){
             return "Clan data is private. Please set war log to public."
         }
-        return formatCurrentStats(response, opponentAttacks);
+        return formatCurrentStats(response);
     },
     /**
      * Formats the help message for the bot. Displays all commands including user added commands
@@ -43,6 +43,23 @@ module.exports = {
             .addField('*help', "Displays all commands and how to use them")
             .setTimestamp()
             .setFooter('Copyright: Chance#0187');
+    },
+    /**
+     * Formats the stats data for a player
+     * @param playerStats - The stats of the player we wish to display
+     * @returns {module:"discord.js".RichEmbed} - Returns the formatted content in a discord embed
+     */
+    formatPlayerStats(playerStats){
+        let output = formatPlayerStats(playerStats);
+        let embed = new Discord.RichEmbed()
+            .setColor('#0099ff')
+            .setTitle(playerStats[0].name)
+            .setTimestamp()
+            .setFooter('Copyright: Chance#0187');
+        for (let i = 0; i < output.results.length; i++){
+            embed.addField(output.results[i].header, output.results[i].data);
+        }
+        return embed;
     }
 };
 
@@ -63,6 +80,113 @@ function formatClanData(response){
         .addField('Members: ', response.members)
         .setTimestamp()
         .setFooter('Copyright: Chance#0187');
+}
+
+function formatPlayerStats(playerStats){
+    let triples = 0;
+    let tripleAttempts = 0;
+    let dips = 0;
+    let dipAttempts = 0;
+    let hitups = 0;
+    let hitupAttempts = 0;
+    let doublehitups = 0;
+    let doublehitupAttempts = 0;
+    let triplehitups = 0;
+    let triplehitupAttempts = 0;
+    for(let i = 0; i < playerStats.length; i++){
+        //Checks for fair th attacks
+        if(playerStats[i].thLevel === playerStats[i].enemyTHLevel && playerStats[i].stars === 3){
+            console.log("Triple Success");
+            triples++;
+            tripleAttempts++;
+        }else if(playerStats[i].thLevel === playerStats[i].enemyTHLevel) {
+            console.log("Triple Fail");
+            tripleAttempts++;
+        }
+        //Checks for dip attacks
+        if(playerStats[i].thLevel > playerStats[i].enemyTHLevel && playerStats[i].stars === 3){
+            console.log("Dip Triple");
+            dips++;
+            dipAttempts++;
+        }else if(playerStats[i].thLevel > playerStats[i].enemyTHLevel){
+            console.log("Dip Fail");
+            dipAttempts++;
+        }
+        //Checks for plus one attacks
+        if((playerStats[i].thLevel + 1) === playerStats[i].enemyTHLevel && playerStats[i].stars === 2){
+            console.log("Hitup Success");
+            hitups++;
+            hitupAttempts++;
+        }else if((playerStats[i].thLevel + 1) === playerStats[i].enemyTHLevel){
+            console.log("Hitup Fail");
+            hitupAttempts++;
+
+        }
+        //Checks for plus two attacks
+        if((playerStats[i].thLevel + 2) === playerStats[i].enemyTHLevel && playerStats[i].stars === 2){
+            console.log("Double Hitup Success");
+            doublehitups++;
+            doublehitupAttempts++;
+        }else if((playerStats[i].thLevel + 2) === playerStats[i].enemyTHLevel){
+            console.log("Double Hitup Fail");
+            doublehitupAttempts++;
+        }
+
+        //Checks for plus three attacks
+        if((playerStats[i].thLevel + 3) === playerStats[i].enemyTHLevel && playerStats[i].stars === 2){
+            console.log("Triple Hitup Success");
+            triplehitups++;
+            triplehitupAttempts++;
+        }else if((playerStats[i].thLevel + 2) === playerStats[i].enemyTHLevel){
+            console.log("Triple Hitup Fail");
+            triplehitupAttempts++;
+        }
+    }
+    if(playerStats[0].thLevel === 13){
+        return {"results" : [
+                {"header" : playerStats[0].thLevel + "v" + playerStats[0].thLevel,
+                    "data" : triples + "/" + tripleAttempts + " " + percentageCalc((triples/tripleAttempts).toFixed(2))},
+                {"header" : playerStats[0].thLevel + "v" + (playerStats[0].thLevel - 1),
+                    "data" : dips + "/" + dipAttempts + " " + percentageCalc((dips/dipAttempts).toFixed(2))}
+            ]};
+    }
+    if(playerStats[0].thLevel === 12){
+        return {"results" : [
+                {"header" : playerStats[0].thLevel + "v" + playerStats[0].thLevel,
+                    "data" : triples + "/" + tripleAttempts + " " + percentageCalc((triples/tripleAttempts).toFixed(2))},
+                {"header" : playerStats[0].thLevel + "v" + (playerStats[0].thLevel - 1),
+                    "data" : dips + "/" + dipAttempts + " " + percentageCalc((dips/dipAttempts).toFixed(2))},
+                {"header" : playerStats[0].thLevel + "v" + (playerStats[0].thLevel + 1),
+                    "data" : hitups + "/" + hitupAttempts + " " + percentageCalc((hitups/hitupAttempts).toFixed(2))}
+            ]};
+    }
+
+    if(playerStats[0].thLevel === 11){
+        return {"results" : [
+                {"header" : playerStats[0].thLevel + "v" + playerStats[0].thLevel,
+                    "data" : triples + "/" + tripleAttempts + " " + percentageCalc((triples/tripleAttempts).toFixed(2))},
+                {"header" : playerStats[0].thLevel + "v" + (playerStats[0].thLevel - 1),
+                    "data" : dips + "/" + dipAttempts + " " + percentageCalc((dips/dipAttempts).toFixed(2))},
+                {"header" : playerStats[0].thLevel + "v" + (playerStats[0].thLevel + 1),
+                    "data" : hitups + "/" + hitupAttempts + " " + percentageCalc((hitups/hitupAttempts).toFixed(2))},
+                {"header" : playerStats[0].thLevel + "v" + (playerStats[0].thLevel + 2),
+                    "data" : doublehitups + "/" + doublehitupAttempts + " " + percentageCalc((doublehitups/doublehitupAttempts).toFixed(2))}
+            ]};
+    }
+    if(playerStats[0].thLevel === 10){
+        return {"results" : [
+                {"header" : playerStats[0].thLevel + "v" + playerStats[0].thLevel,
+                    "data" : triples + "/" + tripleAttempts + " " + percentageCalc((triples/tripleAttempts).toFixed(2))},
+                {"header" : playerStats[0].thLevel + "v" + (playerStats[0].thLevel + 1),
+                    "data" : hitups + "/" + hitupAttempts + " " + percentageCalc((hitups/hitupAttempts).toFixed(2))},
+                {"header" : playerStats[0].thLevel + "v" + (playerStats[0].thLevel + 2),
+                    "data" : doublehitups + "/" + doublehitupAttempts + " " + percentageCalc((doublehitups/doublehitupAttempts).toFixed(2))},
+                {"header" : playerStats[0].thLevel + "v" + (playerStats[0].thLevel + 3),
+                    "data" : triplehitups + "/" + tripleAttempts + " " + percentageCalc((triplehitups/triplehitupAttempts).toFixed(2))},
+
+            ]};
+    }
+
 }
 /**
  * Formats the clans current war data for discord
@@ -184,4 +308,12 @@ function getHitrates(response, isClan, thLevel){
     }
 
     return triples + "/" + attacks;
+}
+
+function percentageCalc(decimal){
+    if(isNaN(decimal)){
+        return "0%";
+    }else{
+        return (decimal * 100) + "%"
+    }
 }

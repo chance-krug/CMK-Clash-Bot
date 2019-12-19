@@ -41,8 +41,9 @@ client.on('message', msg => {
   }
   // Display Stats for a given player tag
   if (msg.content.startsWith('*stats #')){
+    //words[1] = playertag : words[2] = numAttacks
     let words = msg.content.split(' ');
-    axios.getPlayerStats(words[1], msg);
+    axios.getPlayerStats(words[1], msg, words[2]);
   }
   //Create new command
   if (msg.content.startsWith('*add ')){
