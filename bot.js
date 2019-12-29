@@ -141,7 +141,17 @@ function getStats(tag, numAttacks){
 }
 
 
-
+/*********** Muting **************/
+if( msg.content.startsWith("*mute ")){
+  let user = msg.guild.member(msg.mentions.users.first())
+  console.log(user);
+  user.addRole(msg.guild.roles.find(role => role.name === "Muted"));
+}
+if( msg.content.startsWith("*unmute ")){
+  let user = msg.guild.member(msg.mentions.users.first())
+  console.log(user);
+  user.removeRole(msg.guild.roles.find(role => role.name === "Muted"));
+}
 
 
 
