@@ -30,19 +30,26 @@ module.exports = {
      */
     formatHelp: function (dict) {
         //TODO: Add logic for user added commands to be displayed as well
-        return new Discord.RichEmbed()
+        let embed = new Discord.RichEmbed()
             .setColor('#0099ff')
             .setTitle("CMK Clash Help")
-            .addField('ping', "Checks to see if the bot is up.")
-            .addField('*set {clantag}', "Sets the global clantag to use the stats command ex: *set #666666")
-            .addField('*clan {clantag}', "Displays the general data about a clan. ex: *clan #666666")
-            .addField('*stats', "Displays the current clans stats. Must have run *set clantag prior.")
-            .addField('*add {key} {message}', "Adds a custom command to the bot. ex: *add Chance RZ's best th13.")
-            .addField('*{key}', "Displays the custom command for the key provided")
-            .addField('*remove {key}', "Removes the custom command for the key provided")
+            .addField('*ping', "Checks to see if the bot is up.")
             .addField('*help', "Displays all commands and how to use them")
+            .addField('*mute {person}', "Mute the person mentioned")
+            .addField('*unmute {person}', "Unmute the person mentioned")
+            .addField('*add {key} {value}', "Adds a custom command that will be repeated when you use !{key}")
+            .addField('*remove command {key}', "Removes a custom command")
+            .addField('*clan {clantag}', "Displays the general data about a clan. ex: *clan #666666")
+            .addField('*stats', "Displays the current clans stats. Must have run *set {clantag} prior")
+            .addField('*alias {name} {playertag}', "Adds an alias for a village that can be used instead of player tag for seeing stats")
+            .addField('*stats {alias/playertag} {number of Attacks}', "Displays the stats for the given player and number of attacks(optional)")
+            .addField('*remove alias {alias}', "Removes the specified alias")
             .setTimestamp()
-            .setFooter('Copyright: Chance#0187');
+            .setFooter('Chance#0187');
+        for (let i = 0; i < dict.commands.length; i++) {
+            embed.addField(dict.commands[i].key, dict.commands[i].value);
+        }
+        return embed;
     },
     /**
      * Formats the stats data for a player
@@ -55,7 +62,7 @@ module.exports = {
             .setColor('#0099ff')
             .setTitle(playerStats[0].name)
             .setTimestamp()
-            .setFooter('Copyright: Chance#0187');
+            .setFooter('Chance#0187');
         for (let i = 0; i < output.results.length; i++) {
             embed.addField(output.results[i].header, output.results[i].data);
         }
@@ -79,7 +86,7 @@ function formatClanData(response) {
         .addField('Win Streak', response.warWinStreak, true)
         .addField('Members: ', response.members)
         .setTimestamp()
-        .setFooter('Copyright: Chance#0187');
+        .setFooter('Chance#0187');
 }
 
 function formatPlayerStats(playerStats) {
@@ -271,7 +278,7 @@ function formatCurrentStats(response) {
             "       " + th11HitrateFriendly + "  11v11  " + th11HitrateEnemy + "       \n" +
             "       " + th10HitrateFriendly + "  10v10  " + th10HitrateEnemy + "       \n```")
         .setTimestamp()
-        .setFooter('Copyright: Chance#0187');
+        .setFooter('Chance#0187');
 }
 
 /**

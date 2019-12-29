@@ -51,6 +51,7 @@ module.exports = {
      * @param msg - The discord message object that triggered the event
      */
     getPlayerStats(tag, msg, numAttacks){
+        numAttacks = (typeof  numAttacks === "undefined") ? 9000000 : numAttacks;
         console.log("Getting stats for player: " + tag);
         let data = fs.readFileSync('C:\\Users\\chanc\\IdeaProjects\\stats-updater\\stats.json');
         let statsObject = JSON.parse(data);
@@ -59,13 +60,17 @@ module.exports = {
         let playerStats = new Array();
         while (attackCounter < numAttacks && i >= 0) {
             if(statsObject.stats[i].tag === tag){
-                console.log(statsObject.stats[i]);
                 playerStats.push(statsObject.stats[i]);
                 attackCounter++;
             }
             i--;
         }
-        let output = formatter.formatPlayerStats(playerStats);
-        msg.channel.send(output);
+        if(playerStats.length > 0){
+            let output = formatter.formatPlayerStats(playerStats);
+            msg.channel.send(output);
+        }else{
+            msg.channel.send("No stats available for this player. Please complete at least one attack in clan.");
+        }
+
     }
 };
